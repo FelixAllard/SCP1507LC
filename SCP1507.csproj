@@ -75,6 +75,14 @@
   <ItemGroup Condition="$(CI) == 'true'">
     <PackageReference Include="LethalCompany.GameLibs.Steam" Version="*-*" Publicize="true" PrivateAssets="all"/>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="SCP1507.csproj.user" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Unity.Netcode.Runtime">
+      <HintPath>..\..\..\..\FNAF\Foxy\LC-ExampleEnemy-main\Plugin\dlls\Unity.Netcode.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
   <!-- Allows us to use Rpc methods. See https://github.com/EvaisaDev/UnityNetcodePatcher -->
   <!-- This MSBuild option does not work in Visual Studio, using cli option for now

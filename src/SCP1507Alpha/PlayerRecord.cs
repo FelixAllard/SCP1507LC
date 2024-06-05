@@ -24,7 +24,21 @@ public class PlayerRecord
 
     public ulong ClientId => clientId;
 
-    public bool Angered => angered;
+    public bool Angered
+    {
+        get
+        {
+            if (!playerControllerB.isPlayerDead && playerControllerB.isInsideFactory)
+            {
+                return angered;
+            }
+            else
+            {
+                return false;
+            }
+            
+        }
+    } 
     
     public int AngerMeter
     {

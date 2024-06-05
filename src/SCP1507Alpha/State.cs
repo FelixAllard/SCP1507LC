@@ -2,5 +2,8 @@
 
 public enum State
 {
+    Seen,
+    Walking,
+    Targeting
     
 }

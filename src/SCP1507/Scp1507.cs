@@ -25,6 +25,10 @@ public partial class Scp1507 : EnemyAI
     private Coroutine KillCoroutine;
     [Header("Audio")] 
     public AudioClip destroyDoor;
+    public AudioClip[] honks;
+    public AudioClip[] attacks;
+    public AudioSource walkingSource;
+    
     [Header("LookAt")] 
     public Transform lookAt;
     public Transform defaultLookAt;

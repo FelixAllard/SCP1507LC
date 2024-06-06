@@ -29,6 +29,17 @@ public partial class Scp1507Alpha
             );
         }
     }
+    /// <summary>
+    /// Start The lookAt coroutine
+    /// </summary>
+    [ClientRpc]
+    public void StartLookAtCoroutineClientRpc()
+    {
+        if (beingLookedAtCoroutine == null)
+        {
+            beingLookedAtCoroutine = StartCoroutine(CheckIfLookedCoroutine());
+        }
+    }
     //ANIMATION EVENT
     /// <summary>
     /// Synchronised animation for clients [TRIGGERS]
@@ -49,6 +60,7 @@ public partial class Scp1507Alpha
     {
         creatureAnimator.SetBool(animationName, value);
     }
+    
     
 
 }

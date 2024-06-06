@@ -101,6 +101,28 @@ public partial class Scp1507
         rigidbody.detectCollisions = true;
         Destroy(rigidbody.gameObject, 5);
     }
+    /// <summary>
+    /// Called by animation to attack the door
+    /// </summary>
+    public void SwingAttackHitDoor() {
+        //The doors are on the 9nth layer and we want to avoid useless call so... We reduce the size with a mask
+        int objectLayer = 1 << 9;
+        if (IsHost)
+        {
+            Collider[] hitCollidersTrigger = Physics.OverlapBox(AttackArea.position, AttackArea.localScale, Quaternion.identity, objectLayer);
+            if(hitCollidersTrigger.Length > 0){
+                foreach (var player in hitCollidersTrigger)
+                {
+                    DoorLock theDoor = player.gameObject.GetComponent<DoorLock>();
+                    if (theDoor != null)
+                    {
+                        CheckIfCanBreakDoor(theDoor);
+                    }
+                }
+            }
+        }
+        attackCooldown = attackCooldownBeheader;
+    }
     
     
 }

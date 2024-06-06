@@ -18,7 +18,10 @@ public partial class Scp1507Alpha :EnemyAI
     [Header("NetStats")] 
     private ulong localPlayerId;
     private PlayerControllerB localPlayer;
-
+    [Header("Audio")]
+    public AudioClip[] honks;
+    public AudioClip[] attacks;
+    public AudioSource walkingSource;
 
     [Header("FlamingoBasics")] 
     private bool isSeen = false;
@@ -31,9 +34,8 @@ public partial class Scp1507Alpha :EnemyAI
     [Header("Look")]
     public Transform lookAt;
     public Transform defaultLookAt;
-
-
-
+    private Coroutine beingLookedAtCoroutine;
+    
     private Coroutine KillCoroutine;
     
     [NonSerialized]
@@ -91,8 +93,7 @@ public partial class Scp1507Alpha :EnemyAI
         {
             case (int)State.Seen:
                 agent.isStopped = true;
-                
-                
+                StartLookAtCoroutineClientRpc();
                 if (!CheckIfAPlayerHasVisionToCurrentPosition())
                 {
                     PlayAnimationClientRpc("Walking", true);
@@ -129,6 +130,7 @@ public partial class Scp1507Alpha :EnemyAI
                 if (FindAlphaTarget())
                 {
                     PlayAnimationClientRpc("Walking", true);
+                    StartCrusade();
                     SwitchToBehaviourClientRpc((int)State.Targeting);
                 }
 
@@ -223,9 +225,65 @@ public partial class Scp1507Alpha :EnemyAI
                 return true;
             }
         }
-
         return false;
     }
+    
+    /// <summary>
+    /// Check if a specific player has a line of sight on a certain position
+    /// </summary>
+    /// <returns></returns>
+    private bool CheckIfLocalPlayerHasVisionToCurrentPosition_ONEPLAYER()
+    {
+        
+        if (localPlayer.HasLineOfSightToPosition(transform.position))
+        {
+            isSeen = true;
+            return true;
+        }
+        return false;
+    }
+    /// <summary>
+    /// Check if the localPlayer is continuously looking at the alpha
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator CheckIfLookedCoroutine()
+    {
+        int numberOfSecondsSeen = 0;
+        while (true)
+        {
+            if (CheckIfLocalPlayerHasVisionToCurrentPosition_ONEPLAYER())
+            {
+                numberOfSecondsSeen += 1;
+                switch (numberOfSecondsSeen)
+                {
+                    case 10:
+                        AddToAnger(1);
+                        break;
+                    case 20:
+                        AddToAnger(2);
+                        break;
+                    case 30:
+                        AddToAnger(3);
+                        break;
+                    case 40:
+                        AddToAnger(4);
+                        break;
+                    default:
+                        break;
+                }
+
+                yield return new WaitForSeconds(1f);
+            }
+            else
+            {
+                numberOfSecondsSeen = 0;
+            }
+                
+        }
+    }
+
+        
+    
 
     /// <summary>
     /// Will be called from the client to add to the current anger on the server

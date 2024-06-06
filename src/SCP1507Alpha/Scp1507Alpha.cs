@@ -16,7 +16,8 @@ public partial class Scp1507Alpha :EnemyAI
     public int alphaId;
     public List<PlayerRecord?> listOfAnger;
     [Header("NetStats")] 
-    public ulong localPlayerId;
+    private ulong localPlayerId;
+    private PlayerControllerB localPlayer;
 
 
     [Header("FlamingoBasics")] 
@@ -63,11 +64,11 @@ public partial class Scp1507Alpha :EnemyAI
     public override void Start()
     {
         base.Start();
-        localPlayerId = RoundManager.Instance.playersManager.localPlayerController.playerClientId;
+        localPlayer = RoundManager.Instance.playersManager.localPlayerController;
+        localPlayerId = localPlayer.playerClientId;
         StartAlphaSearch();
         attackCooldownBeheader = attackCooldown;
         PlayAnimationClientRpc("IsAlpha", true);
-        
     }
 
     private void LateUpdate()
@@ -268,17 +269,7 @@ public partial class Scp1507Alpha :EnemyAI
         }
         throw new KeyNotFoundException("Player with the given ClientId was not found. CREATING NEW PROFILE");
     }
-    /// <summary>
-    /// Called by attack in VitalCalls
-    /// </summary>
-    /// <param name="playerControllerB">The player which will loose hp</param>
-    /// <returns></returns>
-    IEnumerator DamagePlayerCoroutine(PlayerControllerB playerControllerB)
-    {
-        yield return new WaitForSeconds(0.3f);
-        StopCoroutine(KillCoroutine);
-        playerControllerB.DamagePlayer(damage);
-    }
+    
     /// <summary>
     /// Monster Logger
     /// </summary>

@@ -15,9 +15,21 @@ public partial class Scp1507
     {
         if (other.gameObject.GetComponent<DoorLock>())
         {
-            
+            PlayAnimationClientRpc("AttackDoor", true);
         }
     }
+    /// <summary>
+    /// When the door breaks, we want the flamingo to stop being stupid
+    /// </summary>
+    /// <param name="other"></param>
+    private void OnCollisionExit(Collision other)
+    {
+        if (other.gameObject.GetComponent<DoorLock>())
+        {
+            PlayAnimationClientRpc("AttackDoor", false);
+        }
+    }
+
     /// <summary>
     /// Check if the door is actually breakable or not!
     /// </summary>

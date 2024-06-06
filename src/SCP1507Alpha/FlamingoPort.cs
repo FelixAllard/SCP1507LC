@@ -47,6 +47,9 @@ public partial class Scp1507Alpha
             flamingo.TriggerAlphaCharge(alphaId);
         }
     }
+    /// <summary>
+    /// Make the flamingo stop moving and become inanimate once again
+    /// </summary>
     public void StopMoving()
     {
         foreach (var flamingo in FindObjectsOfType<SCP1507.Scp1507>())

@@ -19,9 +19,16 @@ public partial class Scp1507 : EnemyAI
     private bool isAlphaAlive;
     [Header("Attack")]
     public float attackCooldown;
+    private float attackCooldownBeheader;
     public int damage;
+    public Transform AttackArea;
+    private Coroutine KillCoroutine;
     [Header("Audio")] 
     public AudioClip destroyDoor;
+    [Header("LookAt")] 
+    public Transform lookAt;
+    public Transform defaultLookAt;
+    
 
     [NonSerialized]
     private NetworkVariable<NetworkBehaviourReference> _playerNetVar = new();
@@ -55,8 +62,30 @@ public partial class Scp1507 : EnemyAI
                 return;
             }
         }
-        TriggerRampageClientRpc(2000);
+        TriggerRampage(2000);
     }
+
+    private void LateUpdate()
+    {
+        if (alpha.localAnger >= 7)
+        {
+            if (Scp1507TargetPlayer != null)
+            {
+                lookAt.position = Scp1507TargetPlayer.playerEye.position;
+            }
+            else
+            {
+                lookAt.position = defaultLookAt.position;
+            }
+        }
+        else
+        {
+            lookAt.position = defaultLookAt.position;
+        }
+        
+        attackCooldown -= Time.deltaTime;
+    }
+
     public override void DoAIInterval()
     {
         base.DoAIInterval();

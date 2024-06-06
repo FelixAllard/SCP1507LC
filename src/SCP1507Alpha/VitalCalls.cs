@@ -61,6 +61,17 @@ public partial class Scp1507Alpha : EnemyAI
         }
         attackCooldown = attackCooldownBeheader;
     }
+    /// <summary>
+    /// Called by attack in VitalCalls
+    /// </summary>
+    /// <param name="playerControllerB">The player which will loose hp</param>
+    /// <returns></returns>
+    IEnumerator DamagePlayerCoroutine(PlayerControllerB playerControllerB)
+    {
+        yield return new WaitForSeconds(0.3f);
+        StopCoroutine(KillCoroutine);
+        playerControllerB.DamagePlayer(damage);
+    }
     
     
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using GameNetcodeStuff;
@@ -20,7 +21,19 @@ public partial class Scp1507Alpha :EnemyAI
 
     [Header("FlamingoBasics")] 
     private bool isSeen = false;
-    
+
+    [Header("Attack")]
+    public int damage;
+    public Transform AttackArea;
+    public float attackCooldown;
+    private float attackCooldownBeheader;
+    [Header("Look")]
+    public Transform lookAt;
+    public Transform defaultLookAt;
+
+
+
+    private Coroutine KillCoroutine;
     
     [NonSerialized]
     private NetworkVariable<NetworkBehaviourReference> _playerNetVar = new();
@@ -52,7 +65,21 @@ public partial class Scp1507Alpha :EnemyAI
         base.Start();
         localPlayerId = RoundManager.Instance.playersManager.localPlayerController.playerClientId;
         StartAlphaSearch();
+        attackCooldownBeheader = attackCooldown;
         
+    }
+
+    private void LateUpdate()
+    {
+        if (Scp1507AlphaTargetPlayer != null)
+        {
+            lookAt.position = Scp1507AlphaTargetPlayer.playerEye.position;
+        }
+        else
+        {
+            lookAt.position = defaultLookAt.position;
+        }
+        attackCooldown -= Time.deltaTime;
     }
 
     public override void DoAIInterval()
@@ -189,6 +216,17 @@ public partial class Scp1507Alpha :EnemyAI
             }
         }
         throw new KeyNotFoundException("Player with the given ClientId was not found. CREATING NEW PROFILE");
+    }
+    /// <summary>
+    /// Called by attack in VitalCalls
+    /// </summary>
+    /// <param name="playerControllerB">The player which will loose hp</param>
+    /// <returns></returns>
+    IEnumerator DamagePlayerCoroutine(PlayerControllerB playerControllerB)
+    {
+        yield return new WaitForSeconds(0.3f);
+        StopCoroutine(KillCoroutine);
+        playerControllerB.DamagePlayer(damage);
     }
     /// <summary>
     /// Monster Logger

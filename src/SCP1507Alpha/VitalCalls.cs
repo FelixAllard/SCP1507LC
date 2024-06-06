@@ -1,4 +1,7 @@
-﻿using GameNetcodeStuff;
+﻿using System.Collections;
+using GameNetcodeStuff;
+using Unity.Netcode;
+using UnityEngine;
 
 namespace SCP1507.SCP1507Alpha;
 
@@ -13,7 +16,11 @@ public partial class Scp1507Alpha : EnemyAI
     /// <param name="hitID"></param>
     public override void HitEnemy(int force = 1, PlayerControllerB? playerWhoHit = null, bool playHitSFX = false, int hitID = -1) {
         base.HitEnemy(force, playerWhoHit, playHitSFX, hitID);
-        
+        if (playerWhoHit != null)
+        {
+            GiveServerAngerServerRpc(playerWhoHit.actualClientId, 20);
+            
+        }
         if(isEnemyDead){
             return;
         }
@@ -34,4 +41,26 @@ public partial class Scp1507Alpha : EnemyAI
             }
         }
     }
+    /// <summary>
+    /// Called by animation and resolve damage on player.
+    /// </summary>
+    [ClientRpc]
+    public void SwingAttackHitClientRpc() {
+        int playerLayer = 1 << 3; // This can be found from the game's Asset Ripper output in Unity
+        Collider[] hitColliders = Physics.OverlapBox(AttackArea.position, AttackArea.localScale, Quaternion.identity, playerLayer);
+        if(hitColliders.Length > 0){
+            foreach (var player in hitColliders){
+                PlayerControllerB playerControllerB = MeetsStandardPlayerCollisionConditions(player);
+                if (playerControllerB != null)
+                {
+                    creatureSFX.Play();
+                    MonsterLogger(playerControllerB.health.ToString());
+                    KillCoroutine = StartCoroutine(DamagePlayerCoroutine(playerControllerB));
+                }
+            }
+        }
+        attackCooldown = attackCooldownBeheader;
+    }
+    
+    
 }

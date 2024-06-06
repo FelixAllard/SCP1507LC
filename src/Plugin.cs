@@ -71,7 +71,6 @@ namespace SCP1507 {
             
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
-
         private static void InitializeNetworkBehaviours() {
             // See https://github.com/EvaisaDev/UnityNetcodePatcher?tab=readme-ov-file#preparing-mods-for-patching
             var types = Assembly.GetExecutingAssembly().GetTypes();

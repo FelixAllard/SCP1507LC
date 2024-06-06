@@ -66,6 +66,7 @@ public partial class Scp1507Alpha :EnemyAI
         localPlayerId = RoundManager.Instance.playersManager.localPlayerController.playerClientId;
         StartAlphaSearch();
         attackCooldownBeheader = attackCooldown;
+        PlayAnimationClientRpc("IsAlpha", true);
         
     }
 
@@ -89,31 +90,64 @@ public partial class Scp1507Alpha :EnemyAI
         {
             case (int)State.Seen:
                 agent.isStopped = true;
+                
+                
                 if (!CheckIfAPlayerHasVisionToCurrentPosition())
                 {
+                    PlayAnimationClientRpc("Walking", true);
                     SwitchToBehaviourClientRpc((int)State.Walking);
                 }
 
                 if (FindAlphaTarget())
                 {
+                    PlayAnimationClientRpc("Walking", true);
                     SwitchToBehaviourClientRpc((int)State.Targeting);
+                }
+
+                if (CheckIfPlayerDances())
+                {
+                    PlayAnimationClientRpc("Dancing", true);
+                }
+                else
+                {
+                    PlayAnimationClientRpc("Dancing", false);
                 }
                 
                 break;
             case (int)State.Walking:
                 agent.isStopped = false;
+                if (creatureAnimator.GetBool("Dancing"))
+                {
+                    PlayAnimationClientRpc("Dancing", false);
+                }
                 if (!CheckIfAPlayerHasVisionToCurrentPosition())
                 {
+                    PlayAnimationClientRpc("Walking", false);
                     SwitchToBehaviourClientRpc((int)State.Seen);
                 }
                 if (FindAlphaTarget())
                 {
+                    PlayAnimationClientRpc("Walking", true);
                     SwitchToBehaviourClientRpc((int)State.Targeting);
                 }
 
                 break;
             case (int)State.Targeting:
                 StopCoroutine(searchCoroutine);
+                agent.SetDestination(Scp1507AlphaTargetPlayer.transform.position);
+                if (creatureAnimator.GetBool("Dancing"))
+                {
+                    PlayAnimationClientRpc("Dancing", false);
+                }
+                if (Vector3.Distance(
+                        transform.position, 
+                        Scp1507AlphaTargetPlayer.transform.position
+                    ) < 1.2f && 
+                    attackCooldown<=0.27f
+                )
+                {
+                    PlayAnimationClientRpc("Attack");
+                }
                 
                 break;
             default:
@@ -121,6 +155,23 @@ public partial class Scp1507Alpha :EnemyAI
                 break;
             
         }
+    }
+    /// <summary>
+    /// Checks if a nearby player dances close to the flamingo
+    /// </summary>
+    /// <returns>True if player dances, false if not</returns>
+    private bool CheckIfPlayerDances()
+    {
+        foreach(PlayerControllerB playerScript in RoundManager.Instance.playersManager.allPlayerScripts)
+        {
+            if (!(Vector3.Distance(playerScript.transform.position, transform.position) < 6))
+                break;
+            if(!playerScript.performingEmote)
+                break;
+            return true;
+        }
+
+        return false;
     }
     /// <summary>
     /// Start the search coroutine and all it's necessity!

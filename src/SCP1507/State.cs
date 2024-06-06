@@ -2,5 +2,8 @@
 
 public enum State
 {
-    
+    Unmoving,
+    AlphaCharge,
+    Rampage,
+    None
 }

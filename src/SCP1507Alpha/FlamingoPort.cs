@@ -14,7 +14,7 @@ public partial class Scp1507Alpha
     {
         var allEnemiesList = new List<SpawnableEnemyWithRarity>();
         allEnemiesList.AddRange(RoundManager.Instance.currentLevel.Enemies);
-        var enemyToSpawn = allEnemiesList.Find(x => x.enemyType.enemyName.Equals("SCP1507"));
+        var enemyToSpawn = allEnemiesList.Find(x => x.enemyType.enemyName.Equals("scp1507"));
         GameObject flamingoObject = RoundManager.Instance.SpawnEnemyGameObject(
             RoundManager.Instance.GetRandomNavMeshPositionInRadius(
                 transform.position,
@@ -24,7 +24,6 @@ public partial class Scp1507Alpha
             RoundManager.Instance.currentLevel.Enemies.IndexOf(enemyToSpawn),
             enemyToSpawn.enemyType
         );
-        MonsterLogger("New Flamingo Summoned");
         flamingoObject.GetComponent<SCP1507.Scp1507>().StartCallAlphaClientRpc(alphaId);
     }
     /// <summary>

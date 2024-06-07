@@ -19,6 +19,7 @@ public partial class Scp1507Alpha
             PlayerRecord? currentPlayer = GetPlayerByClientId(clientId);
             //Won't run if caught by try catch :)
             currentPlayer.AngerMeter = anger;
+            MonsterLogger("Player is " + currentPlayer.AngerMeter);
         }
         catch (KeyNotFoundException e)
         {

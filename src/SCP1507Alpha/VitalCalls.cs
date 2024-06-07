@@ -19,6 +19,7 @@ public partial class Scp1507Alpha : EnemyAI
         if (playerWhoHit != null)
         {
             GiveServerAngerServerRpc(playerWhoHit.actualClientId, 20);
+            MonsterLogger("Sent anger to server!");
             
         }
         if(isEnemyDead){
@@ -59,7 +60,7 @@ public partial class Scp1507Alpha : EnemyAI
                 }
             }
         }
-        attackCooldown = attackCooldownBeheader;
+        attackCooldown = 0;
     }
     /// <summary>
     /// Called by attack in VitalCalls

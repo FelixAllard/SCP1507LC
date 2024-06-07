@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Security.Cryptography;
 using GameNetcodeStuff;
 using Unity.Netcode;
@@ -35,8 +36,9 @@ public partial class Scp1507Alpha :EnemyAI
     public Transform lookAt;
     public Transform defaultLookAt;
     private Coroutine beingLookedAtCoroutine;
-    
     private Coroutine KillCoroutine;
+    
+    
     
     [NonSerialized]
     private NetworkVariable<NetworkBehaviourReference> _playerNetVar = new();
@@ -73,6 +75,7 @@ public partial class Scp1507Alpha :EnemyAI
         localPlayerId = localPlayer.playerClientId;
         StartAlphaSearch();
         attackCooldownBeheader = attackCooldown;
+        attackCooldown = 0;
         PlayAnimationClientRpc("IsAlpha", true);
         
         MonsterLogger("Start Function Ran successfully");
@@ -88,7 +91,7 @@ public partial class Scp1507Alpha :EnemyAI
         {
             lookAt.position = defaultLookAt.position;
         }
-        attackCooldown -= Time.deltaTime;
+        attackCooldown += Time.deltaTime;
     }
 
     public override void DoAIInterval()
@@ -98,8 +101,9 @@ public partial class Scp1507Alpha :EnemyAI
         switch (currentBehaviourStateIndex)
         {
             case (int)StateA.Seen:
+                
                 agent.isStopped=true;
-                StartLookAtCoroutineClientRpc();
+                //StartLookAtCoroutineClientRpc();
                 PlayAnimationClientRpc("Walking", false);
                 if (!CheckIfAPlayerHasVisionToCurrentPosition())
                 {
@@ -110,16 +114,20 @@ public partial class Scp1507Alpha :EnemyAI
                 {
                     SwitchToBehaviourClientRpc((int)StateA.Targeting);
                 }
-                PlayAnimationClientRpc("Dancing", CheckIfPlayerDances());
 
+
+                
+                MonsterLogger("Seen");
                 break;
             case (int)StateA.Walking:
+                agent.isStopped=false;
+                
                 PlayAnimationClientRpc("Walking", true);
                 if (creatureAnimator.GetBool("Dancing"))
                 {
                     PlayAnimationClientRpc("Dancing", false);
                 }
-                if (!CheckIfAPlayerHasVisionToCurrentPosition())
+                if (CheckIfAPlayerHasVisionToCurrentPosition())
                 {
                     SwitchToBehaviourClientRpc((int)StateA.Seen);
                 }
@@ -129,8 +137,14 @@ public partial class Scp1507Alpha :EnemyAI
                     SwitchToBehaviourClientRpc((int)StateA.Targeting);
                 }
 
+                if (RandomNumberGenerator.GetInt32(100) <= 3)
+                {
+                    SpawnNewFlamingo();
+                }
+                MonsterLogger("Walking");
                 break;
             case (int)StateA.Targeting:
+                agent.isStopped = false;
                 StopCoroutine(searchCoroutine);
                 PlayAnimationClientRpc("Walking", true);
                 agent.SetDestination(Scp1507AlphaTargetPlayer.transform.position);
@@ -138,16 +152,21 @@ public partial class Scp1507Alpha :EnemyAI
                 {
                     PlayAnimationClientRpc("Dancing", false);
                 }
+                MonsterLogger($"{Vector3.Distance(
+                    transform.position, 
+                    Scp1507AlphaTargetPlayer.transform.position
+                )} AND {attackCooldown} must be greater than {attackCooldownBeheader}");
                 if (Vector3.Distance(
                         transform.position, 
                         Scp1507AlphaTargetPlayer.transform.position
                     ) < 1.2f && 
-                    attackCooldown<=0.27f
+                    attackCooldown>=attackCooldownBeheader
                 )
                 {
+                    MonsterLogger("Attacking", true);
                     PlayAnimationClientRpc("Attack");
                 }
-                
+                MonsterLogger("Targetting");
                 break;
             default:
                 MonsterLogger("WRONG BEHAVIOUR STATE INDEX!", true);
@@ -190,8 +209,7 @@ public partial class Scp1507Alpha :EnemyAI
     {
         if (listOfAnger == null)
         {
-            
-            Debug.LogError("listOfAnger is null.");
+            MonsterLogger("List of Anger is null",true);
             return false;
         }
 
@@ -202,7 +220,7 @@ public partial class Scp1507Alpha :EnemyAI
         {
             if (anger == null)
             {
-                Debug.LogWarning("Encountered a null anger entry.");
+                MonsterLogger("Encounteed a null value Entry", true);
                 continue;
             }
 
@@ -215,11 +233,13 @@ public partial class Scp1507Alpha :EnemyAI
 
         if (highestPlayerRecord == null)
         {
-            Debug.Log("No valid player found with anger.");
+            MonsterLogger("No Valid player to target!");
+            
             return false;
         }
 
         Scp1507AlphaTargetPlayer = highestPlayerRecord.PlayerControllerB;
+        MonsterLogger("Player" + highestPlayerRecord.PlayerControllerB.playerUsername + " Is not the designated target");
         return true;
     }
 
@@ -303,7 +323,8 @@ public partial class Scp1507Alpha :EnemyAI
     /// <param name="x"></param>
     public void AddToAnger(int x)
     {
-        GiveServerAngerServerRpc(localPlayerId, localAnger+x);
+        localAnger += x;
+        GiveServerAngerServerRpc(localPlayerId, localAnger );
     }
     /// <summary>
     /// Will be called from the client to set to the current anger on the server
@@ -311,7 +332,8 @@ public partial class Scp1507Alpha :EnemyAI
     /// <param name="x"></param>
     public void SetToAnger(int x)
     {
-        GiveServerAngerServerRpc(localPlayerId, localAnger+x);
+        localAnger = x;
+        GiveServerAngerServerRpc(localPlayerId, localAnger);
     }
     /// <summary>
     /// Will be called from the client to remove to the current anger on the server
@@ -319,7 +341,8 @@ public partial class Scp1507Alpha :EnemyAI
     /// <param name="x"></param>
     public void RemoveToAnger(int x)
     {
-        GiveServerAngerServerRpc(localPlayerId, localAnger-x);
+        localAnger -= x;
+        GiveServerAngerServerRpc(localPlayerId, localAnger);
     }
     
     /// <summary>
@@ -341,6 +364,7 @@ public partial class Scp1507Alpha :EnemyAI
         throw new KeyNotFoundException("Player with the given ClientId was not found. CREATING NEW PROFILE");
     }
     
+    
     /// <summary>
     /// Monster Logger
     /// </summary>
@@ -351,9 +375,8 @@ public partial class Scp1507Alpha :EnemyAI
         if(!reportable)
             Debug.Log($"[{PluginInfo.PLUGIN_GUID}][SCP1507Alpha][{(reportable ? "PLEASE REPORT TO US IN THE DISCORD CHANNEL" : "Don't Report")}] ~ {message}");
         else
-        {
             Debug.LogError($"[{PluginInfo.PLUGIN_GUID}][SCP1507Alpha][{(reportable ? "PLEASE REPORT TO US IN THE DISCORD CHANNEL" : "Don't Report")}] ~ {message}");
-        }
+        
     }
 
 }

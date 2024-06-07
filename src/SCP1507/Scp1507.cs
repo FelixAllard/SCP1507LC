@@ -15,8 +15,7 @@ public partial class Scp1507 : EnemyAI
     public Scp1507Alpha alpha;
     [NonSerialized]
     public int alphaId;
-
-    private bool isAlphaAlive;
+    private bool isAlphaAlive = false;
     [Header("Attack")]
     public float attackCooldown;
     private float attackCooldownBeheader;
@@ -54,6 +53,7 @@ public partial class Scp1507 : EnemyAI
             }
         }
     }
+
     [ClientRpc]
     public void StartCallAlphaClientRpc(int x)
     {
@@ -71,11 +71,18 @@ public partial class Scp1507 : EnemyAI
 
     private void LateUpdate()
     {
-        if (alpha.localAnger >= 7)
+        if (isAlphaAlive)
         {
-            if (Scp1507TargetPlayer != null)
+            if (alpha.localAnger >= 7)
             {
-                lookAt.position = Scp1507TargetPlayer.playerEye.position;
+                if (Scp1507TargetPlayer != null)
+                {
+                    lookAt.position = Scp1507TargetPlayer.playerEye.position;
+                }
+                else
+                {
+                    lookAt.position = defaultLookAt.position;
+                }
             }
             else
             {
@@ -84,9 +91,8 @@ public partial class Scp1507 : EnemyAI
         }
         else
         {
-            lookAt.position = defaultLookAt.position;
+            lookAt.position = GetClosestPlayer().transform.position;
         }
-        
         attackCooldown -= Time.deltaTime;
     }
 

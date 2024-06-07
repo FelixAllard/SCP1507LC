@@ -14,7 +14,7 @@ public partial class Scp1507Alpha :EnemyAI
     public int localAnger;
 
     public int alphaId;
-    public List<PlayerRecord?> listOfAnger;
+    public List<PlayerRecord> listOfAnger;
     [Header("NetStats")] 
     private ulong localPlayerId;
     private PlayerControllerB localPlayer;
@@ -61,6 +61,9 @@ public partial class Scp1507Alpha :EnemyAI
     private void Awake()
     {
         alphaId = RandomNumberGenerator.GetInt32(1000);
+        localAnger = 0;
+        listOfAnger = new List<PlayerRecord>();
+
     }
 
     public override void Start()
@@ -71,6 +74,8 @@ public partial class Scp1507Alpha :EnemyAI
         StartAlphaSearch();
         attackCooldownBeheader = attackCooldown;
         PlayAnimationClientRpc("IsAlpha", true);
+        
+        MonsterLogger("Start Function Ran successfully");
     }
 
     private void LateUpdate()
@@ -89,54 +94,45 @@ public partial class Scp1507Alpha :EnemyAI
     public override void DoAIInterval()
     {
         base.DoAIInterval();
+        MonsterLogger("We are in the state of :" + currentBehaviourStateIndex);
         switch (currentBehaviourStateIndex)
         {
-            case (int)State.Seen:
-                agent.isStopped = true;
+            case (int)StateA.Seen:
+                agent.isStopped=true;
                 StartLookAtCoroutineClientRpc();
+                PlayAnimationClientRpc("Walking", false);
                 if (!CheckIfAPlayerHasVisionToCurrentPosition())
                 {
-                    PlayAnimationClientRpc("Walking", true);
-                    SwitchToBehaviourClientRpc((int)State.Walking);
+                    
+                    SwitchToBehaviourClientRpc((int)StateA.Walking);
                 }
-
                 if (FindAlphaTarget())
                 {
-                    PlayAnimationClientRpc("Walking", true);
-                    SwitchToBehaviourClientRpc((int)State.Targeting);
+                    SwitchToBehaviourClientRpc((int)StateA.Targeting);
                 }
+                PlayAnimationClientRpc("Dancing", CheckIfPlayerDances());
 
-                if (CheckIfPlayerDances())
-                {
-                    PlayAnimationClientRpc("Dancing", true);
-                }
-                else
-                {
-                    PlayAnimationClientRpc("Dancing", false);
-                }
-                
                 break;
-            case (int)State.Walking:
-                agent.isStopped = false;
+            case (int)StateA.Walking:
+                PlayAnimationClientRpc("Walking", true);
                 if (creatureAnimator.GetBool("Dancing"))
                 {
                     PlayAnimationClientRpc("Dancing", false);
                 }
                 if (!CheckIfAPlayerHasVisionToCurrentPosition())
                 {
-                    PlayAnimationClientRpc("Walking", false);
-                    SwitchToBehaviourClientRpc((int)State.Seen);
+                    SwitchToBehaviourClientRpc((int)StateA.Seen);
                 }
                 if (FindAlphaTarget())
                 {
-                    PlayAnimationClientRpc("Walking", true);
                     StartCrusade();
-                    SwitchToBehaviourClientRpc((int)State.Targeting);
+                    SwitchToBehaviourClientRpc((int)StateA.Targeting);
                 }
 
                 break;
-            case (int)State.Targeting:
+            case (int)StateA.Targeting:
                 StopCoroutine(searchCoroutine);
+                PlayAnimationClientRpc("Walking", true);
                 agent.SetDestination(Scp1507AlphaTargetPlayer.transform.position);
                 if (creatureAnimator.GetBool("Dancing"))
                 {
@@ -183,7 +179,7 @@ public partial class Scp1507Alpha :EnemyAI
     {
         if (searchCoroutine == null)
         {
-            StartSearch(ChooseFarthestNodeFromPosition(transform.position, true).position);
+            StartSearch(transform.position);
         }
     }
     /// <summary>
@@ -192,25 +188,41 @@ public partial class Scp1507Alpha :EnemyAI
     /// <returns>Will return true if the Alpha can target and false if it can't</returns>
     private bool FindAlphaTarget()
     {
+        if (listOfAnger == null)
+        {
+            
+            Debug.LogError("listOfAnger is null.");
+            return false;
+        }
+
         int highestAnger = 0;
-        PlayerRecord? highestPlayerRecord =null;
+        PlayerRecord highestPlayerRecord = null;
+
         foreach (var anger in listOfAnger)
         {
-            if (anger != null && anger.Angered)
+            if (anger == null)
             {
-                if (highestAnger < anger.AngerMeter)
-                {
-                    highestAnger = anger.AngerMeter;
-                    highestPlayerRecord = anger;
-                }
+                Debug.LogWarning("Encountered a null anger entry.");
+                continue;
+            }
+
+            if (anger.Angered && highestAnger < anger.AngerMeter)
+            {
+                highestAnger = anger.AngerMeter;
+                highestPlayerRecord = anger;
             }
         }
-        if (highestPlayerRecord ==null )
+
+        if (highestPlayerRecord == null)
+        {
+            Debug.Log("No valid player found with anger.");
             return false;
+        }
+
         Scp1507AlphaTargetPlayer = highestPlayerRecord.PlayerControllerB;
         return true;
-
     }
+
     /// <summary>
     /// Check if any player has LOS towards the current flamingo
     /// </summary>
@@ -320,6 +332,7 @@ public partial class Scp1507Alpha :EnemyAI
     {
         for (int i = 0; i < listOfAnger.Count; i++)
         {
+        
             if (listOfAnger[i].ClientId == clientId)
             {
                 return listOfAnger[i];

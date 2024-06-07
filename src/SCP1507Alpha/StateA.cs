@@ -1,6 +1,6 @@
 ﻿namespace SCP1507.SCP1507Alpha;
 
-public enum State
+public enum StateA
 {
     Seen,
     Walking,

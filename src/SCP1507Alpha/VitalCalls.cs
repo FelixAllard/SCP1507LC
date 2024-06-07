@@ -39,6 +39,7 @@ public partial class Scp1507Alpha : EnemyAI
                     StopCoroutine(searchCoroutine);
                 }
                 KillEnemyOnOwnerClient();
+                ActivateRampage();
             }
         }
     }
@@ -54,8 +55,7 @@ public partial class Scp1507Alpha : EnemyAI
                 PlayerControllerB playerControllerB = MeetsStandardPlayerCollisionConditions(player);
                 if (playerControllerB != null)
                 {
-                    creatureSFX.Play();
-                    MonsterLogger(playerControllerB.health.ToString());
+                    DoAttackSound();
                     KillCoroutine = StartCoroutine(DamagePlayerCoroutine(playerControllerB));
                 }
             }
@@ -69,9 +69,9 @@ public partial class Scp1507Alpha : EnemyAI
     /// <returns></returns>
     IEnumerator DamagePlayerCoroutine(PlayerControllerB playerControllerB)
     {
-        yield return new WaitForSeconds(0.3f);
-        StopCoroutine(KillCoroutine);
+        yield return new WaitForSeconds(0.1f);
         playerControllerB.DamagePlayer(damage);
+        StopCoroutine(KillCoroutine);
     }
     
     

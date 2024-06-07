@@ -11,18 +11,20 @@ public partial class Scp1507
     /// This will make sure we only call the destroy door when we are touching a door
     /// </summary>
     /// <param name="other"></param>
-    private void OnCollisionEnter(Collision other)
+    private void OnTriggerEnter(Collider other)
     {
+        MonsterLogger("We collided with something!");
         if (other.gameObject.GetComponent<DoorLock>())
         {
             PlayAnimationClientRpc("AttackDoor", true);
         }
     }
+
     /// <summary>
     /// When the door breaks, we want the flamingo to stop being stupid
     /// </summary>
     /// <param name="other"></param>
-    private void OnCollisionExit(Collision other)
+    private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.GetComponent<DoorLock>())
         {

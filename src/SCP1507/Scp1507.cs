@@ -26,12 +26,17 @@ public partial class Scp1507 : EnemyAI
     public AudioClip destroyDoor;
     public AudioClip[] honks;
     public AudioClip[] attacks;
+    public AudioClip attackDoor;
     public AudioSource walkingSource;
+    private FlamingoManager.FlamingoManager flamingoManager;
+    
     
     [Header("LookAt")] 
     public Transform lookAt;
     public Transform defaultLookAt;
-    
+
+
+    private Coroutine startCo;
 
     [NonSerialized]
     private NetworkVariable<NetworkBehaviourReference> _playerNetVar = new();
@@ -54,19 +59,36 @@ public partial class Scp1507 : EnemyAI
         }
     }
 
+    private void Awake()
+    {
+        attackCooldownBeheader = attackCooldown;
+        attackCooldown = 0;
+        startCo = StartCoroutine(StartCoroutineFLAMINGO());
+        if(FlamingoManager.FlamingoManager.Instance!=null)
+            flamingoManager = FlamingoManager.FlamingoManager.Instance;
+        flamingoManager.RegisterScp1507Instance(this);
+            
+    }
+
+    IEnumerator StartCoroutineFLAMINGO()
+    {
+        yield return new WaitForSeconds(3f);
+        TriggerRampage(2000);
+    }
     [ClientRpc]
     public void StartCallAlphaClientRpc(int x)
     {
+        StopCoroutine(startCo);
         foreach (var alphaFla in FindObjectsOfType<SCP1507Alpha.Scp1507Alpha>())
         {
             if (alphaFla.alphaId == x)
             {
                 alpha = alphaFla;
+                alphaId = x;
                 isAlphaAlive = true;
                 return;
             }
         }
-        TriggerRampage(2000);
     }
 
     private void LateUpdate()
@@ -91,9 +113,13 @@ public partial class Scp1507 : EnemyAI
         }
         else
         {
-            lookAt.position = GetClosestPlayer().transform.position;
+            if (GetClosestPlayer() != null)
+            {
+                lookAt.position = GetClosestPlayer().transform.position;
+            }
+            
         }
-        attackCooldown -= Time.deltaTime;
+        attackCooldown += Time.deltaTime;
     }
 
     public override void DoAIInterval()
@@ -135,7 +161,7 @@ public partial class Scp1507 : EnemyAI
                     if (Vector3.Distance(
                             transform.position, 
                             Scp1507TargetPlayer.transform.position
-                        ) < 1.2f && attackCooldown<=1f)
+                        ) < 1.2f && attackCooldown>=1f)
                     {
                         PlayAnimationClientRpc("Attack");
                     }
@@ -148,7 +174,7 @@ public partial class Scp1507 : EnemyAI
                 if (Vector3.Distance(
                         transform.position, 
                         Scp1507TargetPlayer.transform.position
-                    ) < 1.2f && attackCooldown<=1f)
+                    ) < 1.2f && attackCooldown>=1f)
                 {
                     PlayAnimationClientRpc("Attack");
                 }
@@ -169,8 +195,10 @@ public partial class Scp1507 : EnemyAI
     /// </summary>
     public void StopMoving(int flamingoId)
     {
+        
         if (flamingoId == alphaId)
         {
+            PlayAnimationClientRpc("Walking", false);
             SwitchToBehaviourClientRpc((int)State.Unmoving);
         }
     }
@@ -182,6 +210,7 @@ public partial class Scp1507 : EnemyAI
     {
         if (flamingoId == alphaId)
         {
+            PlayAnimationClientRpc("Walking", true);
             SwitchToBehaviourClientRpc((int)State.AlphaCharge);
         }
     }
@@ -189,9 +218,11 @@ public partial class Scp1507 : EnemyAI
     /// Change the state of the flamingo to rampaging
     /// </summary>
     public void TriggerRampage(int flamingoId)
-    {
+    { 
+        
         if (flamingoId == alphaId || flamingoId == 2000)
         {
+            PlayAnimationClientRpc("Walking", true);
             SwitchToBehaviourClientRpc((int)State.Rampage);
         }
     }
@@ -204,7 +235,7 @@ public partial class Scp1507 : EnemyAI
     {
         foreach(PlayerControllerB playerScript in RoundManager.Instance.playersManager.allPlayerScripts)
         {
-            if (!(Vector3.Distance(playerScript.transform.position, transform.position) < 6))
+            if ((Vector3.Distance(playerScript.transform.position, transform.position) < 10f))
                 break;
             if(!playerScript.performingEmote)
                 break;

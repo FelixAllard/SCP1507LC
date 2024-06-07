@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using SCP1507.SCP1507;
 using UnityEngine;
 using Random = System.Random;
@@ -18,7 +19,7 @@ public partial class Scp1507Alpha
         GameObject flamingoObject = RoundManager.Instance.SpawnEnemyGameObject(
             RoundManager.Instance.GetRandomNavMeshPositionInRadius(
                 transform.position,
-                5f
+                10f
             ),
             UnityEngine.Random.RandomRangeInt(0,360),
             RoundManager.Instance.currentLevel.Enemies.IndexOf(enemyToSpawn),
@@ -31,8 +32,14 @@ public partial class Scp1507Alpha
     /// </summary>
     public void ActivateRampage()
     {
+        StartCoroutine(OrderRampage());
+    }
+
+    IEnumerator OrderRampage()
+    {
         foreach (var flamingo in FindObjectsOfType<SCP1507.Scp1507>())
         {
+            yield return new WaitForSeconds(0.1f);
             flamingo.TriggerRampage(alphaId);
         }
     }
@@ -41,8 +48,17 @@ public partial class Scp1507Alpha
     /// </summary>
     public void StartCrusade()
     {
+        MonsterLogger("Calling Crusade! ",true);
         foreach (var flamingo in FindObjectsOfType<SCP1507.Scp1507>())
         {
+            StartCoroutine(OrderCrusade());
+        }
+    }
+    IEnumerator OrderCrusade()
+    {
+        foreach (var flamingo in FindObjectsOfType<SCP1507.Scp1507>())
+        {
+            yield return new WaitForSeconds(0.1f);
             flamingo.TriggerAlphaCharge(alphaId);
         }
     }
@@ -53,6 +69,14 @@ public partial class Scp1507Alpha
     {
         foreach (var flamingo in FindObjectsOfType<SCP1507.Scp1507>())
         {
+            StartCoroutine(OrderStop());
+        }
+    }
+    IEnumerator OrderStop()
+    {
+        foreach (var flamingo in FindObjectsOfType<SCP1507.Scp1507>())
+        {
+            yield return new WaitForSeconds(0.1f);
             flamingo.StopMoving(alphaId);
         }
     }

@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using GameNetcodeStuff;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace SCP1507.SCP1507Alpha;
 
@@ -77,8 +78,11 @@ public partial class Scp1507Alpha :EnemyAI
         attackCooldownBeheader = attackCooldown;
         attackCooldown = 0;
         PlayAnimationClientRpc("IsAlpha", true);
-        
-        MonsterLogger("Start Function Ran successfully");
+        if (FlamingoManager.FlamingoManager.Instance == null)
+        {
+            GameObject managerObject = new GameObject("Scp1507Manager");
+            managerObject.AddComponent<FlamingoManager.FlamingoManager>();
+        }
     }
 
     private void LateUpdate()
@@ -97,7 +101,6 @@ public partial class Scp1507Alpha :EnemyAI
     public override void DoAIInterval()
     {
         base.DoAIInterval();
-        MonsterLogger("We are in the state of :" + currentBehaviourStateIndex);
         switch (currentBehaviourStateIndex)
         {
             case (int)StateA.Seen:
@@ -112,12 +115,12 @@ public partial class Scp1507Alpha :EnemyAI
                 }
                 if (FindAlphaTarget())
                 {
+                    StartCrusade();
                     SwitchToBehaviourClientRpc((int)StateA.Targeting);
                 }
 
 
                 
-                MonsterLogger("Seen");
                 break;
             case (int)StateA.Walking:
                 agent.isStopped=false;
@@ -141,7 +144,6 @@ public partial class Scp1507Alpha :EnemyAI
                 {
                     SpawnNewFlamingo();
                 }
-                MonsterLogger("Walking");
                 break;
             case (int)StateA.Targeting:
                 agent.isStopped = false;
@@ -152,10 +154,6 @@ public partial class Scp1507Alpha :EnemyAI
                 {
                     PlayAnimationClientRpc("Dancing", false);
                 }
-                MonsterLogger($"{Vector3.Distance(
-                    transform.position, 
-                    Scp1507AlphaTargetPlayer.transform.position
-                )} AND {attackCooldown} must be greater than {attackCooldownBeheader}");
                 if (Vector3.Distance(
                         transform.position, 
                         Scp1507AlphaTargetPlayer.transform.position
@@ -163,10 +161,17 @@ public partial class Scp1507Alpha :EnemyAI
                     attackCooldown>=attackCooldownBeheader
                 )
                 {
-                    MonsterLogger("Attacking", true);
                     PlayAnimationClientRpc("Attack");
                 }
-                MonsterLogger("Targetting");
+                if (!Scp1507AlphaTargetPlayer.isInsideFactory || Scp1507AlphaTargetPlayer.isPlayerDead)
+                {
+                    agent.ResetPath();
+                    StartAlphaSearch();
+                    StopMoving();
+                    
+                    SwitchToBehaviourClientRpc((int)StateA.Seen);
+                }
+                
                 break;
             default:
                 MonsterLogger("WRONG BEHAVIOUR STATE INDEX!", true);

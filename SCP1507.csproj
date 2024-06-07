@@ -83,9 +83,6 @@
       <HintPath>..\..\..\..\FNAF\Foxy\LC-ExampleEnemy-main\Plugin\dlls\Unity.Netcode.Runtime.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="src\Patches\" />
-  </ItemGroup>
 
   <!-- Allows us to use Rpc methods. See https://github.com/EvaisaDev/UnityNetcodePatcher -->
   <!-- This MSBuild option does not work in Visual Studio, using cli option for now

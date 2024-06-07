@@ -38,7 +38,6 @@ public class PlayerRecord
             {
                 return false;
             }
-            
         }
     } 
     

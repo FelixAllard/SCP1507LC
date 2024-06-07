@@ -4,7 +4,9 @@ using BepInEx;
 using LethalLib.Modules;
 using BepInEx.Logging;
 using System.IO;
+using HarmonyLib;
 using SCP1507.Configuration;
+using SCP1507.Patches;
 
 namespace SCP1507 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
@@ -13,6 +15,7 @@ namespace SCP1507 {
         internal static new ManualLogSource Logger = null!;
         internal static PluginConfig BoundConfig { get; private set; } = null!;
         public static AssetBundle? ModAssets;
+        private readonly Harmony harmony = new Harmony(PluginInfo.PLUGIN_GUID);
 
         private void Awake() {
             Logger = base.Logger;
@@ -75,6 +78,8 @@ namespace SCP1507 {
             // For using our rarity tables, we can use the following:
             // Enemies.RegisterEnemy(SCP1507, ExampleEnemyLevelRarities, ExampleEnemyCustomLevelRarities, ExampleEnemyTN, ExampleEnemyTK);
             
+            harmony.PatchAll(typeof(NoiseItemPatch));
+            harmony.PatchAll(typeof(PhysicsProp));
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
         private static void InitializeNetworkBehaviours() {

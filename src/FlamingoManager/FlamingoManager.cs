@@ -113,8 +113,11 @@ public class FlamingoManager : MonoBehaviour
 
     public void Emotehandles()
     {
+        Debug.LogWarning("Currently handling :" + playersDoingEmotes.Count);
+        
         foreach (var playerEmoting in playersDoingEmotes)
         {
+            
             playerEmoting.TimeEmoting += 1;
             if (allFlamingo != null)
             {
@@ -157,9 +160,16 @@ public class FlamingoManager : MonoBehaviour
         }
         if (makeDance == true)
         {
-            playersDoingEmotes.Add(new EmoteTime(actualPlayer.actualClientId));
+            if (playersDoingEmotes.FirstOrDefault(e => e.ClientId == actualPlayer.actualClientId) == null)
+            {
+                playersDoingEmotes.Add(new EmoteTime(actualPlayer.actualClientId));
+            }
         }
     }
+    /// <summary>
+    /// When player Stops dancing, need to get called!
+    /// </summary>
+    /// <param name="actualPlayer"></param>
     public void StopEmoting(PlayerControllerB actualPlayer)
     {
         bool makeDance = false;

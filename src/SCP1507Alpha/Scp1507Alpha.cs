@@ -133,12 +133,7 @@ public partial class Scp1507Alpha :EnemyAI
                 break;
             case (int)StateA.Walking:
                 agent.isStopped=false;
-                
                 PlayAnimationClientRpc("Walking", true);
-                if (creatureAnimator.GetBool("Dancing"))
-                {
-                    PlayAnimationClientRpc("Dancing", false);
-                }
                 if (CheckIfAPlayerHasVisionToCurrentPosition())
                 {
                     SwitchToBehaviourClientRpc((int)StateA.Seen);
@@ -159,10 +154,6 @@ public partial class Scp1507Alpha :EnemyAI
                 StopCoroutine(searchCoroutine);
                 PlayAnimationClientRpc("Walking", true);
                 agent.SetDestination(Scp1507AlphaTargetPlayer.transform.position);
-                if (creatureAnimator.GetBool("Dancing"))
-                {
-                    PlayAnimationClientRpc("Dancing", false);
-                }
                 if (Vector3.Distance(
                         transform.position, 
                         Scp1507AlphaTargetPlayer.transform.position

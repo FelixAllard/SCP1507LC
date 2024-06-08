@@ -15,6 +15,7 @@ internal class PlayerControllerBPatch
             FlamingoManager.FlamingoManager.Instance.StartEmoting(__instance);
         }
     }
+    //TODO Fix this for they just won't stop dancing!
     [HarmonyPatch("StopPerformingEmoteServerRpc")]
     [HarmonyPostfix]
     private static void PostFixStop(PlayerControllerB __instance)

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using GameNetcodeStuff;
 using SCP1507.SCP1507Alpha;
 using Unity.Netcode;
 using UnityEngine;
+using Random = System.Random;
 
 namespace SCP1507.SCP1507;
 
@@ -64,10 +66,17 @@ public partial class Scp1507 : EnemyAI
         attackCooldownBeheader = attackCooldown;
         attackCooldown = 0;
         startCo = StartCoroutine(StartCoroutineFLAMINGO());
-        if(FlamingoManager.FlamingoManager.Instance!=null)
+        if (FlamingoManager.FlamingoManager.Instance != null)
+        {
             flamingoManager = FlamingoManager.FlamingoManager.Instance;
-        flamingoManager.RegisterScp1507Instance(this);
-            
+            flamingoManager.RegisterScp1507Instance(this); 
+        }
+        //Makes a random bool value VVV
+        Random random = new Random();
+        bool randomBool = random.Next(2) == 0;
+        PlayAnimationClientRpc("DanceDirection", randomBool);
+        //Makes a random bool value AAA
+        
     }
 
     IEnumerator StartCoroutineFLAMINGO()
@@ -131,15 +140,6 @@ public partial class Scp1507 : EnemyAI
                 agent.isStopped = true;
                 agent.speed = 5f;
                 agent.ResetPath();
-                
-                if (CheckIfPlayerDances())
-                {
-                    PlayAnimationClientRpc("Dancing", true);
-                }
-                else
-                {
-                    PlayAnimationClientRpc("Dancing", false);
-                }
                 break;
             case (int)State.AlphaCharge:
                 agent.isStopped = false;

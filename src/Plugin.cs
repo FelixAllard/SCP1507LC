@@ -4,6 +4,7 @@ using BepInEx;
 using LethalLib.Modules;
 using BepInEx.Logging;
 using System.IO;
+using GameNetcodeStuff;
 using HarmonyLib;
 using SCP1507.Configuration;
 using SCP1507.Patches;
@@ -80,6 +81,7 @@ namespace SCP1507 {
             
             harmony.PatchAll(typeof(NoiseItemPatch));
             harmony.PatchAll(typeof(PhysicsProp));
+            harmony.PatchAll(typeof(PlayerControllerBPatch));
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
         private static void InitializeNetworkBehaviours() {

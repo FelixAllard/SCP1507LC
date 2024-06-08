@@ -95,7 +95,7 @@ public partial class Scp1507 : EnemyAI
     {
         if (isAlphaAlive)
         {
-            if (alpha.localAnger >= 7)
+            if (alpha.LocalAnger >= 7)
             {
                 if (Scp1507TargetPlayer != null)
                 {
@@ -273,5 +273,15 @@ public partial class Scp1507 : EnemyAI
         {
             Debug.LogError($"[{PluginInfo.PLUGIN_GUID}][SCP1507Instance][{(reportable ? "PLEASE REPORT TO US IN THE DISCORD CHANNEL" : "Don't Report")}] ~ {message}");
         }
+    }
+
+    public void StartDance()
+    {
+        PlayAnimationClientRpc("Dancing", true);
+    }
+
+    public void StopDance()
+    {
+        PlayAnimationClientRpc("Dancing", false);
     }
 }

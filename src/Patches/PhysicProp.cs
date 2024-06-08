@@ -2,12 +2,12 @@
 
 namespace SCP1507.Patches;
 
-[HarmonyPatch(typeof(PhysicsProp))]
+[HarmonyPatch(typeof(GrabbableObject))]
 internal class PhysicProp
 {
-    [HarmonyPatch("GrabItemOnClient")]
+    [HarmonyPatch("GrabItem")]
     [HarmonyPostfix]
-    private static void PostFix(PhysicsProp __instance)
+    private static void PostFix(GrabbableObject __instance)
     {
         if (FlamingoManager.FlamingoManager.Instance != null)
         {

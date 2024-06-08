@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SCP1507.DataClass;
 using Unity.Netcode;
 
 namespace SCP1507.SCP1507Alpha;

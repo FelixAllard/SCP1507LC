@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Security.Cryptography;
 using GameNetcodeStuff;
+using SCP1507.DataClass;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -13,9 +14,17 @@ namespace SCP1507.SCP1507Alpha;
 public partial class Scp1507Alpha :EnemyAI
 {
     [Header("Make anger")] 
-    public int localAnger;
-
     public int alphaId;
+
+    private int localAnger;
+
+    public int LocalAnger
+    {
+        get => localAnger;
+        set => localAnger = value;
+    }
+
+
     public List<PlayerRecord> listOfAnger;
     [Header("NetStats")] 
     private ulong localPlayerId;
@@ -244,7 +253,6 @@ public partial class Scp1507Alpha :EnemyAI
         }
 
         Scp1507AlphaTargetPlayer = highestPlayerRecord.PlayerControllerB;
-        MonsterLogger("Player" + highestPlayerRecord.PlayerControllerB.playerUsername + " Is not the designated target");
         return true;
     }
 

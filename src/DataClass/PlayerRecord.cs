@@ -1,8 +1,6 @@
-﻿using System;
-using GameNetcodeStuff;
-using UnityEngine.UIElements;
+﻿using GameNetcodeStuff;
 
-namespace SCP1507.SCP1507Alpha;
+namespace SCP1507.DataClass;
 
 public class PlayerRecord
 {

@@ -9,7 +9,7 @@ public partial class Scp1507
     {
         creatureSFX.PlayOneShot(attacks[RandomNumberGenerator.GetInt32(attacks.Length)]);
     }
-    private void DoQuackSound()
+    public void DoQuackSound()
     {
         creatureVoice.PlayOneShot(honks[RandomNumberGenerator.GetInt32(honks.Length)]);
     }

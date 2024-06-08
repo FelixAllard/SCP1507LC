@@ -1,4 +1,5 @@
 ﻿using GameNetcodeStuff;
+using UnityEngine;
 
 namespace SCP1507.DataClass;
 
@@ -56,6 +57,7 @@ public class PlayerRecord
                     angered = true;
                 }
                 angerMeter = value; // Set the value directly if within range
+                Debug.Log(PlayerControllerB.playerUsername + " has an anger of " + value);
             }
         }
     }

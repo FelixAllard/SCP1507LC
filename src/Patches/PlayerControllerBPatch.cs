@@ -22,7 +22,7 @@ internal class PlayerControllerBPatch
     {
         if (FlamingoManager.FlamingoManager.Instance != null)
         {
-            FlamingoManager.FlamingoManager.Instance.StartEmoting(__instance);
+            FlamingoManager.FlamingoManager.Instance.StopEmoting(__instance);
         }
     }
 }

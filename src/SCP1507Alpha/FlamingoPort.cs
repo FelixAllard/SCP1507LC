@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using SCP1507.SCP1507;
 using UnityEngine;
 using Random = System.Random;
@@ -16,6 +17,26 @@ public partial class Scp1507Alpha
         var allEnemiesList = new List<SpawnableEnemyWithRarity>();
         allEnemiesList.AddRange(RoundManager.Instance.currentLevel.Enemies);
         var enemyToSpawn = allEnemiesList.Find(x => x.enemyType.enemyName.Equals("scp1507"));
+        GameObject flamingoObject = RoundManager.Instance.SpawnEnemyGameObject(
+            RoundManager.Instance.GetRandomNavMeshPositionInRadius(
+                transform.position,
+                10f
+            ),
+            UnityEngine.Random.RandomRangeInt(0,360),
+            RoundManager.Instance.currentLevel.Enemies.IndexOf(enemyToSpawn),
+            enemyToSpawn.enemyType
+        );
+        flamingoObject.GetComponent<SCP1507.Scp1507>().StartCallAlphaClientRpc(alphaId);
+        if (RandomNumberGenerator.GetInt32(10) == 1)
+        {
+            
+        }
+    }
+    public void SpawnNewAlphaFlamingo()
+    {
+        var allEnemiesList = new List<SpawnableEnemyWithRarity>();
+        allEnemiesList.AddRange(RoundManager.Instance.currentLevel.Enemies);
+        var enemyToSpawn = allEnemiesList.Find(x => x.enemyType.enemyName.Equals("scp1507Alpha"));
         GameObject flamingoObject = RoundManager.Instance.SpawnEnemyGameObject(
             RoundManager.Instance.GetRandomNavMeshPositionInRadius(
                 transform.position,

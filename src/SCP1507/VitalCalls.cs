@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Security.Cryptography;
 using GameNetcodeStuff;
 using Unity.Netcode;
 using UnityEngine;
@@ -19,7 +20,6 @@ public partial class Scp1507
         if (playerWhoHit != null && isAlphaAlive)
         {
             alpha.GiveServerAngerServerRpc(playerWhoHit.actualClientId, 3);
-            MonsterLogger("Sent anger to server!");
         }
         if(isEnemyDead){
             return;
@@ -32,7 +32,12 @@ public partial class Scp1507
                 // so we don't need to call a death animation ourselves.
                 //StopCoroutine(SwingAttack());
                 // We need to stop our search coroutine, because the game does not do that by default.
+                
                 KillEnemyOnOwnerClient();
+                if (FlamingoManager.FlamingoManager.Instance != null)
+                {
+                    FlamingoManager.FlamingoManager.Instance.UnregisterScp1507Instance(this);
+                }
             }
         }
     }
@@ -45,7 +50,7 @@ public partial class Scp1507
                 PlayerControllerB playerControllerB = MeetsStandardPlayerCollisionConditions(player);
                 if (playerControllerB != null)
                 {
-                    creatureSFX.Play();
+                    creatureSFX.PlayOneShot(attacks[RandomNumberGenerator.GetInt32(attacks.Length)]);
                     MonsterLogger(playerControllerB.health.ToString());
                     KillCoroutine = StartCoroutine(DamagePlayerCoroutine(playerControllerB));
                 }

@@ -96,14 +96,18 @@ public partial class Scp1507Alpha :EnemyAI
 
     private void LateUpdate()
     {
-        if (Scp1507AlphaTargetPlayer != null)
+        if (!isEnemyDead)
         {
-            lookAt.position = Scp1507AlphaTargetPlayer.playerEye.position;
+            if (Scp1507AlphaTargetPlayer != null)
+            {
+                lookAt.position = Scp1507AlphaTargetPlayer.playerEye.position;
+            }
+            else
+            {
+                lookAt.position = defaultLookAt.position;
+            }
         }
-        else
-        {
-            lookAt.position = defaultLookAt.position;
-        }
+        
         attackCooldown += Time.deltaTime;
     }
 
@@ -238,8 +242,7 @@ public partial class Scp1507Alpha :EnemyAI
 
         if (highestPlayerRecord == null)
         {
-            MonsterLogger("No Valid player to target!");
-            
+            //No Valid Player To target
             return false;
         }
 

@@ -99,7 +99,7 @@ public partial class Scp1507 : EnemyAI
             }
         }
     }
-
+    //TODO Fix the error message when player dies or  exit facility
     private void LateUpdate()
     {
         if (isAlphaAlive)

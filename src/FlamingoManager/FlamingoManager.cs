@@ -4,11 +4,14 @@ using System.Security.Cryptography;
 using GameNetcodeStuff;
 using SCP1507.SCP1507;
 using SCP1507.SCP1507Alpha;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Random = System.Random;
 
 namespace SCP1507.FlamingoManager;
 
-using System.Collections.Generic;
-using UnityEngine;
+
 
 public class FlamingoManager : MonoBehaviour
 {
@@ -16,6 +19,7 @@ public class FlamingoManager : MonoBehaviour
     public static FlamingoManager Instance => _instance;
     private List<SCP1507.Scp1507> allFlamingo;
     private List<EmoteTime> playersDoingEmotes;
+    private int honksDone;
 
     private void Awake()
     {
@@ -30,6 +34,7 @@ public class FlamingoManager : MonoBehaviour
         _instance = this;
         InvokeRepeating("CheckIfSeen", 2f, 7f);
         InvokeRepeating("Emotehandles", 5f, 1f);
+        InvokeRepeating("HonkManager", 5f, 6f);
     }
     
     public void RegisterScp1507Instance(SCP1507.Scp1507 instance)
@@ -76,13 +81,14 @@ public class FlamingoManager : MonoBehaviour
             float distance = Vector3.Distance(positionOfPickup, flamingo.transform.position);
             if (distance <= 5f)
             {
+                Debug.LogError("WE DID PICKUP AND ITEM!");
                 flamingo.alpha.LocalAnger += 2;
                 flamingo.alpha.GiveServerAngerServerRpc(playerHeldBy.actualClientId,flamingo.alpha.LocalAnger);
                 return;
             }
         }
     }
-
+    //Working!
     public void CheckIfSeen()
     {
         var filteredPlayerScripts = RoundManager.Instance.playersManager.allPlayerScripts
@@ -99,7 +105,6 @@ public class FlamingoManager : MonoBehaviour
         {
             if (playerChosen.HasLineOfSightToPosition(flamingo.transform.position))
             {
-                Debug.LogWarning("Gave 2 anger to server");
                 if (flamingo.alpha != null)
                 {
                     flamingo.alpha.LocalAnger += 2;
@@ -166,6 +171,25 @@ public class FlamingoManager : MonoBehaviour
             }
         }
     }
+    public void HonkManager()
+    {
+        if (allFlamingo.Count == 0)
+            return;
+        int amountOfHonks = allFlamingo.Count / 3;
+        amountOfHonks += 1;
+        StartCoroutine(HonkForTimes(amountOfHonks));
+    }
+
+    IEnumerator HonkForTimes(int numberOfHonks)
+    {
+        honksDone = 0;
+        while (honksDone<numberOfHonks)
+        {
+            allFlamingo[RandomNumberGenerator.GetInt32(allFlamingo.Count)].DoQuackSound();
+            yield return new WaitForSeconds(RandomFloatBetween(0.1f,1f));
+            honksDone++;
+        }
+    }
     /// <summary>
     /// When player Stops dancing, need to get called!
     /// </summary>
@@ -186,5 +210,19 @@ public class FlamingoManager : MonoBehaviour
         {
             playersDoingEmotes.Remove(playersDoingEmotes.FirstOrDefault(e => e.ClientId == actualPlayer.actualClientId));
         }
+    }
+    /// <summary>
+    /// TO generate a random Floating point number
+    /// </summary>
+    /// <param name="min"></param>
+    /// <param name="max"></param>
+    /// <returns></returns>
+    public static float RandomFloatBetween(float min, float max)
+    {
+        Random random = new Random();
+        double range = max - min;
+        double sample = random.NextDouble();
+        double scaled = (sample * range) + min;
+        return (float)scaled;
     }
 }

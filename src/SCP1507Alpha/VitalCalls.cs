@@ -19,8 +19,6 @@ public partial class Scp1507Alpha : EnemyAI
         if (playerWhoHit != null)
         {
             GiveServerAngerServerRpc(playerWhoHit.actualClientId, 20);
-            MonsterLogger("Sent anger to server!");
-            
         }
         if(isEnemyDead){
             return;

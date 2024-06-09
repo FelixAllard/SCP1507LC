@@ -147,8 +147,7 @@ public partial class Scp1507Alpha :EnemyAI
                     StartCrusade();
                     SwitchToBehaviourClientRpc((int)StateA.Targeting);
                 }
-
-                if (RandomNumberGenerator.GetInt32(100) <= 3)
+                if (RandomNumberGenerator.GetInt32(100) <= 4)
                 {
                     SpawnNewFlamingo();
                 }

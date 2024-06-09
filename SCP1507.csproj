@@ -79,6 +79,9 @@
     <Content Include="SCP1507.csproj.user" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="LethalBestiary">
+      <HintPath>DLL\LethalBestiary.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Netcode.Runtime">
       <HintPath>..\..\..\..\FNAF\Foxy\LC-ExampleEnemy-main\Plugin\dlls\Unity.Netcode.Runtime.dll</HintPath>
     </Reference>

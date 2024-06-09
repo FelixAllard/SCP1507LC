@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using UnityEngine;
 using BepInEx;
-using LethalLib.Modules;
+using LethalBestiary.Modules;
 using BepInEx.Logging;
 using System.IO;
 using GameNetcodeStuff;
@@ -11,7 +11,7 @@ using SCP1507.Patches;
 
 namespace SCP1507 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-    [BepInDependency(LethalLib.Plugin.ModGUID)] 
+    [BepInDependency(LethalBestiary.Plugin.ModGUID)] 
     public class Plugin : BaseUnityPlugin {
         internal static new ManualLogSource Logger = null!;
         internal static PluginConfig BoundConfig { get; private set; } = null!;

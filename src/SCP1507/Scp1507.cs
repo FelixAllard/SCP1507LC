@@ -52,7 +52,7 @@ public partial class Scp1507 : EnemyAI
         {
             if (value == null)
             {
-                _playerNetVar.Value = null;
+                _playerNetVar.Value = default(NetworkBehaviourReference);
             }
             else
             {
@@ -106,7 +106,7 @@ public partial class Scp1507 : EnemyAI
         {
             if (alpha.LocalAnger >= 7)
             {
-                if (Scp1507TargetPlayer != null)
+                if (Scp1507TargetPlayer != default)
                 {
                     lookAt.position = Scp1507TargetPlayer.playerEye.position;
                 }
@@ -126,7 +126,7 @@ public partial class Scp1507 : EnemyAI
             {
                 lookAt.position = GetClosestPlayer().transform.position;
             }
-            
+        
         }
         attackCooldown += Time.deltaTime;
     }
@@ -150,12 +150,34 @@ public partial class Scp1507 : EnemyAI
                     PlayAnimationClientRpc("Dancing", false);
                 }
 
-                if (Vector3.Distance(transform.position, Scp1507TargetPlayer.transform.position) > 20f)
+                if (Scp1507TargetPlayer != default)
                 {
-                    agent.SetDestination(RoundManager.Instance.GetRandomNavMeshPositionInRadius(Scp1507TargetPlayer.transform.position));
-                    agent.speed = 10f;
+                    if (Vector3.Distance(transform.position, Scp1507TargetPlayer.transform.position) > 10f)
+                    {
+                        agent.SetDestination(RoundManager.Instance.GetRandomNavMeshPositionInRadius(alpha.transform.position));
+                        agent.speed = 10f;
+                    }
+                    else
+                    {
+                        if (Scp1507TargetPlayer != default)
+                        {
+                            agent.SetDestination(Scp1507TargetPlayer.transform.position);
+                            if (Vector3.Distance(
+                                    transform.position, 
+                                    Scp1507TargetPlayer.transform.position
+                                ) < 1.2f && attackCooldown>=1f)
+                            {
+                                PlayAnimationClientRpc("Attack");
+                            }
+                        }
+                    }
                 }
-                else
+                
+                break;
+            case (int)State.Rampage:
+                agent.speed = 5f;
+                Scp1507TargetPlayer = GetClosestPlayer();
+                if (Scp1507TargetPlayer != default)
                 {
                     agent.SetDestination(Scp1507TargetPlayer.transform.position);
                     if (Vector3.Distance(
@@ -166,17 +188,9 @@ public partial class Scp1507 : EnemyAI
                         PlayAnimationClientRpc("Attack");
                     }
                 }
-                break;
-            case (int)State.Rampage:
-                agent.speed = 5f;
-                Scp1507TargetPlayer = GetClosestPlayer();
-                agent.SetDestination(Scp1507TargetPlayer.transform.position);
-                if (Vector3.Distance(
-                        transform.position, 
-                        Scp1507TargetPlayer.transform.position
-                    ) < 1.2f && attackCooldown>=1f)
+                else
                 {
-                    PlayAnimationClientRpc("Attack");
+                    agent.ResetPath();
                 }
                 break;
             case (int)State.None:
@@ -265,6 +279,20 @@ public partial class Scp1507 : EnemyAI
     {
         creatureAnimator.SetBool(animationName, value);
     }
+    /// <summary>
+    /// Called by Flamingo Manager! Makes the flamingo start dancing!
+    /// </summary>
+    public void StartDance()
+    {
+        PlayAnimationClientRpc("Dancing", true);
+    }
+    /// <summary>
+    /// Called by Flamingo Manager! Makes the flamingo stop dancing!
+    /// </summary>
+    public void StopDance()
+    {
+        PlayAnimationClientRpc("Dancing", false);
+    }
     private void MonsterLogger(String message, bool reportable = false)
     {
         if(!reportable)
@@ -275,13 +303,5 @@ public partial class Scp1507 : EnemyAI
         }
     }
 
-    public void StartDance()
-    {
-        PlayAnimationClientRpc("Dancing", true);
-    }
-
-    public void StopDance()
-    {
-        PlayAnimationClientRpc("Dancing", false);
-    }
+    
 }

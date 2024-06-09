@@ -19,7 +19,8 @@ public partial class Scp1507
         base.HitEnemy(force, playerWhoHit, playHitSFX, hitID);
         if (playerWhoHit != null && isAlphaAlive)
         {
-            alpha.GiveServerAngerServerRpc(playerWhoHit.actualClientId, 3);
+            alpha.LocalAnger += 5;
+            alpha.GiveServerAngerServerRpc(playerWhoHit.actualClientId, alpha.LocalAnger);
         }
         if(isEnemyDead){
             return;

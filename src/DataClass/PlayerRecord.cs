@@ -52,12 +52,11 @@ public class PlayerRecord
             }
             else
             {
-                if(angerMeter >= 10)
+                if(value >= 10)
                 {
                     angered = true;
                 }
                 angerMeter = value; // Set the value directly if within range
-                Debug.Log(PlayerControllerB.playerUsername + " has an anger of " + value);
             }
         }
     }

@@ -1,7 +1,7 @@
 
 # SCP 1507, the Flamingo Army
 
-![Here is an horde of flamingo, ready to peck your skull](https://imgur.com/a/RVPj6G1)
+![banner](https://imgur.com/a/RVPj6G1)
 
 ---
 
@@ -14,9 +14,6 @@
 ---
 
 ## Introduction
-
-![Image of SCP 1507](https://imgur.com/a/RVPj6G1 "SCP 1507 Instance")
-
 Welcome to the new enemy of ProjectSCP, which aims to add various element of the world of SCP's to Lethal Company.
 This ones add SCP-1507 as a new enemy. Join our [Discord](https://discord.gg/H6ZEmpXwjZ) server for updates  on new SCP projects.
 ---
@@ -79,6 +76,7 @@ Feel free to reach out for collaboration or queries :
 <h6>
 JoeJoe
 </h6>
+
 - **Discord:** [JoeJoe](https://discordapp.com/users/167920913289838592)
 
 <h6>

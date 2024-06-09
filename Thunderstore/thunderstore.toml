@@ -28,6 +28,9 @@ target = "plugins/SCP1507/"
 [[build.copy]]
 source = "./CHANGELOG.md"
 target = "/"
+[[build.copy]]
+source = "./License.txt"
+target = "/"
 
 [publish]
 communities = [ "lethal-company", ]

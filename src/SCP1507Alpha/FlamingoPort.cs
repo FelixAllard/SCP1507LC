@@ -27,7 +27,7 @@ public partial class Scp1507Alpha
             enemyToSpawn.enemyType
         );
         flamingoObject.GetComponent<SCP1507.Scp1507>().StartCallAlphaClientRpc(alphaId);
-        if (RandomNumberGenerator.GetInt32(10) == 1)
+        if (RandomNumberGenerator.GetInt32(10) <= 1)
         {
             
         }

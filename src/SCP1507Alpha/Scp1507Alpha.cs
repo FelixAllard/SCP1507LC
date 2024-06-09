@@ -89,8 +89,8 @@ public partial class Scp1507Alpha :EnemyAI
         PlayAnimationClientRpc("IsAlpha", true);
         if (FlamingoManager.FlamingoManager.Instance == null)
         {
-            GameObject managerObject = new GameObject("Scp1507Manager");
-            managerObject.AddComponent<FlamingoManager.FlamingoManager>();
+            GameObject manager = new GameObject("Scp1507Manager");
+            manager.AddComponent<FlamingoManager.FlamingoManager>();
         }
     }
 
@@ -385,4 +385,8 @@ public partial class Scp1507Alpha :EnemyAI
         
     }
 
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+    }
 }

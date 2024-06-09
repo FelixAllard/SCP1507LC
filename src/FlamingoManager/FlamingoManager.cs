@@ -44,7 +44,14 @@ public class FlamingoManager : MonoBehaviour
 
     public void UnregisterScp1507Instance(SCP1507.Scp1507 instance)
     {
-        allFlamingo.Remove(instance);
+        foreach (var flamingo in allFlamingo)
+        {
+            if (flamingo == instance)
+            {
+                allFlamingo.Remove(instance);
+                return;
+            }
+        }
     }
 
     public void AirHornCheck(PlayerControllerB playerHeldBy)
@@ -54,7 +61,6 @@ public class FlamingoManager : MonoBehaviour
             float distance = Vector3.Distance(playerHeldBy.transform.position, flamingo.transform.position);
             if (distance <= 5f)
             {
-                Debug.Log("We are sending!");
                 flamingo.alpha.LocalAnger += 1;
                 flamingo.alpha.GiveServerAngerServerRpc(playerHeldBy.actualClientId,flamingo.alpha.LocalAnger);
                 return;
@@ -81,7 +87,6 @@ public class FlamingoManager : MonoBehaviour
             float distance = Vector3.Distance(positionOfPickup, flamingo.transform.position);
             if (distance <= 5f)
             {
-                Debug.LogError("WE DID PICKUP AND ITEM!");
                 flamingo.alpha.LocalAnger += 2;
                 flamingo.alpha.GiveServerAngerServerRpc(playerHeldBy.actualClientId,flamingo.alpha.LocalAnger);
                 return;
@@ -108,6 +113,26 @@ public class FlamingoManager : MonoBehaviour
                 if (flamingo.alpha != null)
                 {
                     flamingo.alpha.LocalAnger += 2;
+                    
+                    foreach (var item in playerChosen.ItemSlots)
+                    {
+                        if (item == null) continue;
+                        if(!item.isHeld) continue;
+                        if (item.gameObject.GetComponent<Shovel>() != null)
+                        {
+                            flamingo.alpha.LocalAnger += 3;
+                        }
+
+                        if (item.gameObject.GetComponent<KnifeItem>() != null)
+                        {
+                            flamingo.alpha.LocalAnger += 3;
+                        }
+
+                        if (item.gameObject.GetComponent<ShotgunItem>() != null)
+                        {
+                            flamingo.alpha.LocalAnger += 7;
+                        }
+                    }
                     flamingo.alpha.GiveServerAngerServerRpc(playerChosen.actualClientId,flamingo.alpha.LocalAnger);
                     return; 
                 }
@@ -118,8 +143,6 @@ public class FlamingoManager : MonoBehaviour
 
     public void Emotehandles()
     {
-        Debug.LogWarning("Currently handling :" + playersDoingEmotes.Count);
-        
         foreach (var playerEmoting in playersDoingEmotes)
         {
             
@@ -156,12 +179,21 @@ public class FlamingoManager : MonoBehaviour
         bool makeDance = false;
         foreach (var flamingo in allFlamingo)
         {
-            if (Vector3.Distance(flamingo.transform.position, actualPlayer.transform.position) < 6)
+            try
             {
-                flamingo.StartDance();
-                makeDance = true;
+                if (Vector3.Distance(flamingo.transform.position, actualPlayer.transform.position) < 6)
+                {
+                    flamingo.StartDance();
+                    makeDance = true;
                    
+                }
             }
+            catch (NullReferenceException e)
+            {
+                UnregisterScp1507Instance(flamingo);
+                throw;
+            }
+            
         }
         if (makeDance == true)
         {
@@ -211,6 +243,8 @@ public class FlamingoManager : MonoBehaviour
             playersDoingEmotes.Remove(playersDoingEmotes.FirstOrDefault(e => e.ClientId == actualPlayer.actualClientId));
         }
     }
+    
+    
     /// <summary>
     /// TO generate a random Floating point number
     /// </summary>
@@ -224,5 +258,13 @@ public class FlamingoManager : MonoBehaviour
         double sample = random.NextDouble();
         double scaled = (sample * range) + min;
         return (float)scaled;
+    }
+
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+        CancelInvoke("CheckIfSeen");
+        CancelInvoke("Emotehandles");
+        CancelInvoke("HonkManager");
     }
 }

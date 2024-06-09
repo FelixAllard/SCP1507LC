@@ -6,7 +6,9 @@ using SCP1507.SCP1507;
 using SCP1507.SCP1507Alpha;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
+using LogLevel = BepInEx.Logging.LogLevel;
 using Random = System.Random;
 
 namespace SCP1507.FlamingoManager;
@@ -117,20 +119,26 @@ public class FlamingoManager : MonoBehaviour
                     foreach (var item in playerChosen.ItemSlots)
                     {
                         if (item == null) continue;
+                        MonsterLogger("1 DONE");
                         if(!item.isHeld) continue;
+                        MonsterLogger("2 DONE");
                         if (item.gameObject.GetComponent<Shovel>() != null)
                         {
+                            MonsterLogger("Holding shovel!");
                             flamingo.alpha.LocalAnger += 3;
+                            break;
                         }
 
                         if (item.gameObject.GetComponent<KnifeItem>() != null)
                         {
                             flamingo.alpha.LocalAnger += 3;
+                            break;
                         }
 
                         if (item.gameObject.GetComponent<ShotgunItem>() != null)
                         {
                             flamingo.alpha.LocalAnger += 7;
+                            break;
                         }
                     }
                     flamingo.alpha.GiveServerAngerServerRpc(playerChosen.actualClientId,flamingo.alpha.LocalAnger);
@@ -259,6 +267,11 @@ public class FlamingoManager : MonoBehaviour
         double scaled = (sample * range) + min;
         return (float)scaled;
     }
+    [ClientRpc]
+    public void DestroyManagerClientRpc()
+    {
+        Destroy(gameObject);
+    }
 
     private void OnDestroy()
     {
@@ -266,5 +279,14 @@ public class FlamingoManager : MonoBehaviour
         CancelInvoke("CheckIfSeen");
         CancelInvoke("Emotehandles");
         CancelInvoke("HonkManager");
+    }
+    private void MonsterLogger(String message, bool reportable = false)
+    {
+        if(!reportable)
+            Plugin.Logger.Log(LogLevel.Info,$"[{PluginInfo.PLUGIN_GUID}][SCP1507Manager][{(reportable ? "PLEASE REPORT TO US IN THE DISCORD CHANNEL" : "Don't Report")}] ~ {message}");
+        else
+        {
+            Plugin.Logger.Log(LogLevel.Error,$"[{PluginInfo.PLUGIN_GUID}][SCP1507Manager][{(reportable ? "PLEASE REPORT TO US IN THE DISCORD CHANNEL" : "Don't Report")}] ~ {message}");
+        }
     }
 }

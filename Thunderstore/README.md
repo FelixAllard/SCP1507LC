@@ -59,6 +59,9 @@ What makes them angry?
 - Hitting the Alpha ( +20 anger )
 - Looking at them to much ( +2 anger )
 - Using the AirHorn next to them ( +1 anger )
+- Having a shotgun while looking at them ( +9 anger 
+- Having a knife while looking at them ( +5 anger )
+- Having a shovel while looking at them ( +5 anger )
 
 What calms them?
 - Dancing next to them ( -1 anger )

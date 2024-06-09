@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Security.Cryptography;
 using GameNetcodeStuff;
 using Unity.Netcode;
@@ -20,7 +21,15 @@ public partial class Scp1507
         if (playerWhoHit != null && isAlphaAlive)
         {
             alpha.LocalAnger += 5;
-            alpha.GiveServerAngerServerRpc(playerWhoHit.actualClientId, alpha.LocalAnger);
+            try
+            {
+                alpha.GiveServerAngerServerRpc(playerWhoHit.actualClientId, alpha.LocalAnger);
+            }
+            catch (InvalidOperationException e)
+            {
+                MonsterLogger("Small error on calling!");
+                throw;
+            }
         }
         if(isEnemyDead){
             return;

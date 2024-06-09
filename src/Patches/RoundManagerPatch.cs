@@ -13,7 +13,7 @@ internal class RoundManagerPatch
     {
         if (FlamingoManager.FlamingoManager.Instance != null)
         {
-            Object.Destroy(FlamingoManager.FlamingoManager.Instance.gameObject);
+            FlamingoManager.FlamingoManager.Instance.DestroyManagerClientRpc();
         }
     }
 }

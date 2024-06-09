@@ -16,7 +16,7 @@ namespace SCP1507 {
         internal static new ManualLogSource Logger = null!;
         public static AssetBundle? ModAssets;
         private readonly Harmony harmony = new Harmony(PluginInfo.PLUGIN_GUID);
-
+        
         private void Awake() {
             Logger = base.Logger;
             // This should be ran before Network Prefabs are registered.

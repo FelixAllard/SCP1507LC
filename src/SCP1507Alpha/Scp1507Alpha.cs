@@ -8,6 +8,7 @@ using SCP1507.DataClass;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UIElements;
+using LogLevel = BepInEx.Logging.LogLevel;
 
 namespace SCP1507.SCP1507Alpha;
 
@@ -379,9 +380,9 @@ public partial class Scp1507Alpha :EnemyAI
     private void MonsterLogger(String message, bool reportable = false)
     {
         if(!reportable)
-            Debug.Log($"[{PluginInfo.PLUGIN_GUID}][SCP1507Alpha][{(reportable ? "PLEASE REPORT TO US IN THE DISCORD CHANNEL" : "Don't Report")}] ~ {message}");
+            Plugin.Logger.Log(LogLevel.Info,($"[{PluginInfo.PLUGIN_GUID}][SCP1507Alpha][{(reportable ? "PLEASE REPORT TO US IN THE DISCORD CHANNEL" : "Don't Report")}] ~ {message}"));
         else
-            Debug.LogError($"[{PluginInfo.PLUGIN_GUID}][SCP1507Alpha][{(reportable ? "PLEASE REPORT TO US IN THE DISCORD CHANNEL" : "Don't Report")}] ~ {message}");
+            Plugin.Logger.Log(LogLevel.Error,$"[{PluginInfo.PLUGIN_GUID}][SCP1507Alpha][{(reportable ? "PLEASE REPORT TO US IN THE DISCORD CHANNEL" : "Don't Report")}] ~ {message}");
         
     }
 

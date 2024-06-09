@@ -82,6 +82,11 @@ public class FlamingoManager : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// Pickup item, called by patch
+    /// </summary>
+    /// <param name="playerHeldBy"></param>
+    /// <param name="positionOfPickup"></param>
     public void PickupItemTrigger(PlayerControllerB playerHeldBy, Vector3 positionOfPickup)
     {
         foreach (var flamingo in allFlamingo)
@@ -148,7 +153,9 @@ public class FlamingoManager : MonoBehaviour
             }
         }
     }
-
+    /// <summary>
+    /// Emotes handles
+    /// </summary>
     public void Emotehandles()
     {
         foreach (var playerEmoting in playersDoingEmotes)
@@ -181,7 +188,10 @@ public class FlamingoManager : MonoBehaviour
             }
         }
     }
-
+    /// <summary>
+    /// Start Emoting
+    /// </summary>
+    /// <param name="actualPlayer"></param>
     public void StartEmoting(PlayerControllerB actualPlayer)
     {
         bool makeDance = false;
@@ -211,6 +221,9 @@ public class FlamingoManager : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// Honk manager
+    /// </summary>
     public void HonkManager()
     {
         if (allFlamingo.Count == 0)

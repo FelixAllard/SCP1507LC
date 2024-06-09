@@ -296,10 +296,10 @@ public partial class Scp1507 : EnemyAI
     private void MonsterLogger(String message, bool reportable = false)
     {
         if(!reportable)
-            Debug.Log($"[{PluginInfo.PLUGIN_GUID}][SCP1507Instance][{(reportable ? "PLEASE REPORT TO US IN THE DISCORD CHANNEL" : "Don't Report")}] ~ {message}");
+            Plugin.Logger.LogInfo($"[{PluginInfo.PLUGIN_GUID}][SCP1507Instance][{(reportable ? "PLEASE REPORT TO US IN THE DISCORD CHANNEL" : "Don't Report")}] ~ {message}");
         else
         {
-            Debug.LogError($"[{PluginInfo.PLUGIN_GUID}][SCP1507Instance][{(reportable ? "PLEASE REPORT TO US IN THE DISCORD CHANNEL" : "Don't Report")}] ~ {message}");
+            Plugin.Logger.LogError($"[{PluginInfo.PLUGIN_GUID}][SCP1507Instance][{(reportable ? "PLEASE REPORT TO US IN THE DISCORD CHANNEL" : "Don't Report")}] ~ {message}");
         }
     }
 

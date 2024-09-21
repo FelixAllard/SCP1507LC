@@ -32,7 +32,7 @@ public class FlamingoManager : MonoBehaviour
             Destroy(this.gameObject);
             return;
         }
-
+        
         _instance = this;
         InvokeRepeating("CheckIfSeen", 2f, 7f);
         InvokeRepeating("Emotehandles", 5f, 1f);
@@ -55,7 +55,6 @@ public class FlamingoManager : MonoBehaviour
             }
         }
     }
-
     public void AirHornCheck(PlayerControllerB playerHeldBy)
     {
         foreach (var flamingo in allFlamingo)
@@ -103,7 +102,7 @@ public class FlamingoManager : MonoBehaviour
     //Working!
     public void CheckIfSeen()
     {
-        var filteredPlayerScripts = RoundManager.Instance.playersManager.allPlayerScripts
+        PlayerControllerB[] filteredPlayerScripts = RoundManager.Instance.playersManager.allPlayerScripts
             .Where(player => !player.isPlayerDead && player.isPlayerControlled && player.isInsideFactory)
             .ToArray();
         PlayerControllerB playerChosen;
@@ -115,6 +114,10 @@ public class FlamingoManager : MonoBehaviour
             
         foreach (var flamingo in allFlamingo)
         {
+            if (flamingo == null)
+            {
+                continue;
+            }
             if (playerChosen.HasLineOfSightToPosition(flamingo.transform.position))
             {
                 if (flamingo.alpha != null)
@@ -195,24 +198,31 @@ public class FlamingoManager : MonoBehaviour
     public void StartEmoting(PlayerControllerB actualPlayer)
     {
         bool makeDance = false;
-        foreach (var flamingo in allFlamingo)
+        try
         {
-            try
+            foreach (var flamingo in allFlamingo)
             {
-                if (Vector3.Distance(flamingo.transform.position, actualPlayer.transform.position) < 6)
+                try
                 {
-                    flamingo.StartDance();
-                    makeDance = true;
-                   
+                    if (Vector3.Distance(flamingo.transform.position, actualPlayer.transform.position) < 6)
+                    {
+                        flamingo.StartDance();
+                        makeDance = true;
+
+                    }
                 }
+                catch (NullReferenceException e)
+                {
+                    UnregisterScp1507Instance(flamingo);
+                }
+
             }
-            catch (NullReferenceException e)
-            {
-                UnregisterScp1507Instance(flamingo);
-                throw;
-            }
+        }
+        catch (InvalidOperationException e)
+        {
             
         }
+        
         if (makeDance == true)
         {
             if (playersDoingEmotes.FirstOrDefault(e => e.ClientId == actualPlayer.actualClientId) == null)
@@ -252,6 +262,8 @@ public class FlamingoManager : MonoBehaviour
         bool makeDance = false;
         foreach (var flamingo in allFlamingo)
         {
+            if(flamingo==null)
+                continue;
             if (Vector3.Distance(flamingo.transform.position, actualPlayer.transform.position) < 6)
             {
                 flamingo.StopDance();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using UnityEngine;
 
@@ -12,6 +13,14 @@ public partial class Scp1507
     }
     public void DoQuackSound()
     {
-    creatureVoice.PlayOneShot(honks[RandomNumberGenerator.GetInt32(honks.Length)]);
+        try
+        {
+            creatureVoice.PlayOneShot(honks[RandomNumberGenerator.GetInt32(honks.Length)]);
+        }
+        catch (ArgumentNullException e)
+        {
+            //DoNothing
+        }
+        
     }
 }

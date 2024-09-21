@@ -7,6 +7,7 @@ using BepInEx.Logging;
 using System.IO;
 using GameNetcodeStuff;
 using HarmonyLib;
+using SCP1507.Configurations;
 using SCP1507.Patches;
 
 namespace SCP1507 {
@@ -16,9 +17,13 @@ namespace SCP1507 {
         internal static new ManualLogSource Logger = null!;
         public static AssetBundle? ModAssets;
         private readonly Harmony harmony = new Harmony(PluginInfo.PLUGIN_GUID);
+        public static new Config FlamingoConfig { get; internal set; }
         
+            
         private void Awake() {
             Logger = base.Logger;
+            
+            FlamingoConfig = new(base.Config);
             // This should be ran before Network Prefabs are registered.
             InitializeNetworkBehaviours();
 
@@ -48,7 +53,7 @@ namespace SCP1507 {
             var SCP966LevelRarities = new Dictionary<Levels.LevelTypes, int> {
                 {Levels.LevelTypes.VowLevel, 20},
                 {Levels.LevelTypes.MarchLevel, 20},
-                {Levels.LevelTypes.All, 40},     // Affects unset values, with lowest priority (gets overridden by Levels.LevelTypes.Modded)
+                {Levels.LevelTypes.All, FlamingoConfig.RARITY_ALPHA.Value},     // Affects unset values, with lowest priority (gets overridden by Levels.LevelTypes.Modded)
                 {Levels.LevelTypes.Modded, 40},     // Affects values for modded moons that weren't specified
             };
             
@@ -64,14 +69,14 @@ namespace SCP1507 {
             NetworkPrefabs.RegisterNetworkPrefab(Scp1507.enemyPrefab);
             Logger.LogInfo($"Registered Prfabs");
             // For different ways of registering your enemy, see https://github.com/EvaisaDev/LethalLib/blob/main/LethalLib/Modules/Enemies.cs
-            Enemies.RegisterEnemy(Scp1507, 40, Levels.LevelTypes.All, Scp1507TN, Scp1507TK);
+            Enemies.RegisterEnemy(Scp1507, 0, Levels.LevelTypes.All, Scp1507TN, Scp1507TK);
             //Enemies.RegisterEnemy(Scp1507Alpha, 40, Levels.LevelTypes.All, Scp1507AlphaTN, Scp1507AlphaTk);
             Enemies.RegisterEnemy(Scp1507Alpha, SCP966LevelRarities, SCp966CustomLevelRarities, Scp1507AlphaTN, Scp1507AlphaTk);
             Logger.LogInfo($"Registered enemies");
             
             // For using our rarity tables, we can use the following:
             
-            
+            harmony.PatchAll(typeof(ConfigurationsPatch));
             harmony.PatchAll(typeof(NoiseItemPatch));
             harmony.PatchAll(typeof(PhysicsProp));
             harmony.PatchAll(typeof(PlayerControllerBPatch));

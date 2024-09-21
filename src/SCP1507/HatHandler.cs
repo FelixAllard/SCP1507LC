@@ -12,9 +12,12 @@ public class HatHandler :MonoBehaviour
 
     private void Awake()
     {
-        int chosenHat = RandomNumberGenerator.GetInt32(allHats.Count);
-        allHats[chosenHat].SetActive(true);
-        allHats.RemoveAt(chosenHat);
+        if (Plugin.FlamingoConfig.CUSTOM_HAT.Value)
+        {
+            int chosenHat = RandomNumberGenerator.GetInt32(allHats.Count);
+            allHats[chosenHat].SetActive(true);
+            allHats.RemoveAt(chosenHat);
+        }
         foreach (var hat in allHats)
         {
             Destroy(hat);

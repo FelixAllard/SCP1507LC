@@ -66,6 +66,7 @@ public partial class Scp1507 : EnemyAI
         attackCooldownBeheader = attackCooldown;
         attackCooldown = 0;
         startCo = StartCoroutine(StartCoroutineFLAMINGO());
+        damage = Plugin.FlamingoConfig.DAMAGE_NORMAL.Value;
         if (FlamingoManager.FlamingoManager.Instance != null)
         {
             flamingoManager = FlamingoManager.FlamingoManager.Instance;

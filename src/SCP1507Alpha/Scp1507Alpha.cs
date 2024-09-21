@@ -48,7 +48,7 @@ public partial class Scp1507Alpha :EnemyAI
     public Transform defaultLookAt;
     private Coroutine beingLookedAtCoroutine;
     private Coroutine KillCoroutine;
-    
+    private int numberOfFlamingos;
     
     
     [NonSerialized]
@@ -73,6 +73,8 @@ public partial class Scp1507Alpha :EnemyAI
     }
     private void Awake()
     {
+        numberOfFlamingos = 0;
+        damage = Plugin.FlamingoConfig.DAMAGE_NORMAL.Value;
         alphaId = RandomNumberGenerator.GetInt32(1000);
         localAnger = 0;
         listOfAnger = new List<PlayerRecord>();
@@ -148,7 +150,7 @@ public partial class Scp1507Alpha :EnemyAI
                     StartCrusade();
                     SwitchToBehaviourClientRpc((int)StateA.Targeting);
                 }
-                if (RandomNumberGenerator.GetInt32(100) <= 4)
+                if (RandomNumberGenerator.GetInt32(100) <= Plugin.FlamingoConfig.CHANCE_SPAWN_NEW_FLAMINGO.Value && numberOfFlamingos <= Plugin.FlamingoConfig.MAXIMUM_NUMBER_OF_FLAMINGO.Value)
                 {
                     SpawnNewFlamingo();
                 }

@@ -9,7 +9,7 @@ public class PlayerRecord
     {
         this.clientId = clientId;
         this.angerMeter = angerMeter;
-        if (this.angerMeter >= 10)
+        if (this.angerMeter >= Plugin.FlamingoConfig.ANGER_FOR_ANGRY_FLAMINGO.Value)
         {
             angered = true;
         }
@@ -52,7 +52,7 @@ public class PlayerRecord
             }
             else
             {
-                if(value >= 10)
+                if(value >= Plugin.FlamingoConfig.ANGER_FOR_ANGRY_FLAMINGO.Value)
                 {
                     angered = true;
                 }

@@ -27,9 +27,10 @@ public partial class Scp1507Alpha
             enemyToSpawn.enemyType
         );
         flamingoObject.GetComponent<SCP1507.Scp1507>().StartCallAlphaClientRpc(alphaId);
-        if (RandomNumberGenerator.GetInt32(10) <= 1)
+        numberOfFlamingos += 1;
+        if (RandomNumberGenerator.GetInt32(100) <= Plugin.FlamingoConfig.CHANCE_SPAWN_NEW_ALPHA.Value && Plugin.FlamingoConfig.CAN_SPAWN_ALPHA.Value)
         {
-            
+            SpawnNewAlphaFlamingo();
         }
     }
     public void SpawnNewAlphaFlamingo()
@@ -69,7 +70,7 @@ public partial class Scp1507Alpha
     /// </summary>
     public void StartCrusade()
     {
-        MonsterLogger("Calling Crusade! ",true);
+        MonsterLogger("Calling Crusade! ");
         foreach (var flamingo in FindObjectsOfType<SCP1507.Scp1507>())
         {
             StartCoroutine(OrderCrusade());

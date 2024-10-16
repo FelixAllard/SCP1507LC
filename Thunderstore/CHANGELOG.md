@@ -19,6 +19,13 @@
 - Adjusted base rarity of alpha spawn 100 --> 40 ( I didn't mean for it to be 100, did an error while taking my configs, so sorry for flamingo's army)
 
 ## 1.1.2
-
 - Fixed a bunch of error for the flamingo in the logs ( Didn't affect gameplay )
 - Added chicken Hat  ( For Takey birthday)
+### Playtested by 
+- [a glitched npc](https://www.twitch.tv/a_glitched_npc)
+- [lizziegirl0099](https://www.twitch.tv/lizziegirl0099)
+- WillsterEdge
+
+## 1.1.3
+- Fixed a console spam with another mod
+- Changed the logo of the mod
